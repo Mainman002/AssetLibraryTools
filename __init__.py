@@ -2,7 +2,7 @@ bl_info = {
     "name": "AssetLibraryTools",
     "description": "AssetLibraryTools is a free addon which aims to speed up the process of creating asset libraries with the asset browser, This addon is currently very much experimental as is the asset browser in blender.",
     "author": "Lucian James (LJ3D)",
-    "version": (0, 1, 9),
+    "version": (0, 1, 8),
     "blender": (3, 0, 0),
     "location": "3D View > Tools",
     "warning": "Developed in 3.0 ALPHA. May be unstable or broken in future versions", # used for warning icon and text in addons panel
@@ -143,13 +143,19 @@ class shaderSetup():
         node_texCoord = shaderSetup.createNode(mat, "ShaderNodeTexCoord", "node_texCoord", (-1500,0))
         # Link base nodes
         links.new(node_principled.outputs['BSDF'], node_output.inputs['Surface'])
-        links.new(node_texCoord.outputs['UV'], node_mapping.inputs['Vector'])
+        links.new(node_texCoord.outputs[tool.repeat_mapping], node_mapping.inputs['Vector'])
         
         # Create, fill, and link texture nodes
         imported_tex_nodes = 0
         if diffuseTexture != None and tool.import_diff != False:
             node_imTexDiffuse = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexDiffuse", (-800,300-(300*imported_tex_nodes)))
             node_imTexDiffuse.image = diffuseTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexDiffuse.projection = 'BOX'
+                node_imTexDiffuse.projection_blend = 1
+
             links.new(node_imTexDiffuse.outputs['Color'], node_principled.inputs['Base Color'])
             links.new(node_mapping.outputs['Vector'], node_imTexDiffuse.inputs['Vector'])
             imported_tex_nodes += 1
@@ -157,6 +163,12 @@ class shaderSetup():
         if sssTexture != None and tool.import_sss != False:
             node_imTexSSS = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexSSS", (-800,300-(300*imported_tex_nodes)))
             node_imTexSSS.image = sssTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexSSS.projection = 'BOX'
+                node_imTexSSS.projection_blend = 1
+
             links.new(node_imTexSSS.outputs['Color'], node_principled.inputs['Subsurface'])
             links.new(node_mapping.outputs['Vector'], node_imTexSSS.inputs['Vector'])
             imported_tex_nodes += 1
@@ -164,6 +176,12 @@ class shaderSetup():
         if metallicTexture != None and tool.import_met != False:
             node_imTexMetallic = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexMetallic", (-800,300-(300*imported_tex_nodes)))
             node_imTexMetallic.image = metallicTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexMetallic.projection = 'BOX'
+                node_imTexMetallic.projection_blend = 1
+
             links.new(node_imTexMetallic.outputs['Color'], node_principled.inputs['Metallic'])
             links.new(node_mapping.outputs['Vector'], node_imTexMetallic.inputs['Vector'])
             imported_tex_nodes += 1
@@ -171,6 +189,12 @@ class shaderSetup():
         if specularTexture != None and tool.import_spec != False:
             node_imTexSpecular = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexSpecular", (-800,300-(300*imported_tex_nodes)))
             node_imTexSpecular.image = specularTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexSpecular.projection = 'BOX'
+                node_imTexSpecular.projection_blend = 1
+
             links.new(node_imTexSpecular.outputs['Color'], node_principled.inputs['Specular'])
             links.new(node_mapping.outputs['Vector'], node_imTexSpecular.inputs['Vector'])
             imported_tex_nodes += 1
@@ -178,6 +202,12 @@ class shaderSetup():
         if roughnessTexture != None and tool.import_rough != False:
             node_imTexRoughness = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexRoughness", (-800,300-(300*imported_tex_nodes)))
             node_imTexRoughness.image = roughnessTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexRoughness.projection = 'BOX'
+                node_imTexRoughness.projection_blend = 1
+
             links.new(node_imTexRoughness.outputs['Color'], node_principled.inputs['Roughness'])
             links.new(node_mapping.outputs['Vector'], node_imTexRoughness.inputs['Vector'])
             imported_tex_nodes += 1
@@ -185,6 +215,12 @@ class shaderSetup():
         if emissionTexture != None and tool.import_emission != False:
             node_imTexEmission = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexEmission", (-800,300-(300*imported_tex_nodes)))
             node_imTexEmission.image = emissionTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexEmission.projection = 'BOX'
+                node_imTexEmission.projection_blend = 1
+
             links.new(node_imTexEmission.outputs['Color'], node_principled.inputs['Emission'])
             links.new(node_mapping.outputs['Vector'], node_imTexEmission.inputs['Vector'])
             imported_tex_nodes += 1
@@ -192,6 +228,12 @@ class shaderSetup():
         if alphaTexture != None and tool.import_alpha != False:
             node_imTexAlpha = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexAlpha", (-800,300-(300*imported_tex_nodes)))
             node_imTexAlpha.image = alphaTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexAlpha.projection = 'BOX'
+                node_imTexAlpha.projection_blend = 1
+
             links.new(node_imTexAlpha.outputs['Color'], node_principled.inputs['Alpha'])
             links.new(node_mapping.outputs['Vector'], node_imTexAlpha.inputs['Vector'])
             imported_tex_nodes += 1
@@ -199,6 +241,12 @@ class shaderSetup():
         if normalTexture != None and tool.import_norm != False:
             node_imTexNormal = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexNormal", (-800,300-(300*imported_tex_nodes)))
             node_imTexNormal.image = normalTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexNormal.projection = 'BOX'
+                node_imTexNormal.projection_blend = 1
+
             node_normalMap = shaderSetup.createNode(mat, "ShaderNodeNormalMap", "node_normalMap", (-500,300-(300*imported_tex_nodes)))
             links.new(node_imTexNormal.outputs['Color'], node_normalMap.inputs['Color'])
             links.new(node_normalMap.outputs['Normal'], node_principled.inputs['Normal'])
@@ -208,6 +256,12 @@ class shaderSetup():
         if displacementTexture != None and tool.import_disp != False:
             node_imTexDisplacement = shaderSetup.createNode(mat, "ShaderNodeTexImage", "node_imTexDisplacement", (-800,300-(300*imported_tex_nodes)))
             node_imTexDisplacement.image = displacementTexture
+
+            ## Repeat
+            if tool.repeat_mapping == 'Object':
+                node_imTexDisplacement.projection = 'BOX'
+                node_imTexDisplacement.projection_blend = 1
+
             node_displacement = shaderSetup.createNode(mat, "ShaderNodeDisplacement", "node_displacement", (-200,-600))
             links.new(node_imTexDisplacement.outputs['Color'], node_displacement.inputs['Height'])
             links.new(node_displacement.outputs['Displacement'], node_output.inputs['Displacement'])
@@ -235,6 +289,13 @@ def listDownloadAttribs(scene, context):
 # ------------------------------------------------------------------------ 
 
 class properties(PropertyGroup):
+
+    ## Repeat
+    repeat_mapping : EnumProperty(
+        name='Mapping',
+        default='UV',
+        items=[('UV', 'UV', 'Use UVs to control mapping'),
+        ('Object', 'Object', 'Wrap texture along world coords')])
     
     # Material import properties
     mat_import_path : StringProperty(
@@ -1023,6 +1084,7 @@ class OBJECT_PT_panel(Panel):
             if obj.matImportOptions_expanded:
                 matImportOptionsRow = matImportBox.row()
                 matImportBox.label(text="Import settings:")
+                matImportBox.prop(tool, "repeat_mapping")
                 matImportBox.prop(tool, "skip_existing")
                 matImportBox.separator()
                 matImportBox.label(text="Material settings:")
